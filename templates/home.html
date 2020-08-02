@@ -1,0 +1,317 @@
+<!-- Code adopted from https://aws.amazon.com/blogs/machine-learning/greetings-visitor-engage-your-web-users-with-amazon-lex/-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Learning Management System</title>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <link
+            rel="stylesheet"
+            href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css"
+    />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <script src="https://sdk.amazonaws.com/js/aws-sdk-2.41.0.min.js"></script>
+    <style language="text/css">
+        /* Remove the navbar's default margin-bottom and rounded borders */
+
+        .navbar {
+            margin-bottom: 0;
+            border-radius: 0;
+        }
+
+        /* Set height of the grid so .sidenav can be 100% (adjust as needed) */
+
+        .row.content {
+            height: 450px;
+        }
+
+        /* Set gray background color and 100% height */
+
+        .sidenav {
+            padding-top: 20px;
+            height: 100%;
+        }
+
+        /* Set black background color, white text and some padding */
+
+        footer {
+            background-color: #555;
+            color: white;
+            padding: 15px;
+        }
+
+        /* On small screens, set height to 'auto' for sidenav and grid */
+
+        @media screen and (max-width: 767px) {
+            .sidenav {
+                height: auto;
+                padding: 15px;
+            }
+
+            .row.content {
+                height: auto;
+            }
+        }
+
+        input#lexinput {
+            padding: 4px;
+            font-size: 1em;
+            width: 400px;
+        }
+
+        input::placeholder {
+            color: #ccc;
+            font-style: italic;
+        }
+
+        p.userRequest {
+            margin: 4px;
+            padding: 4px 10px 4px 10px;
+            border-radius: 4px;
+            min-width: 50%;
+            max-width: 85%;
+            float: left;
+            background-color: #7d7;
+        }
+
+        p.lexResponse {
+            margin: 4px;
+            padding: 4px 10px 4px 10px;
+            border-radius: 4px;
+            text-align: right;
+            min-width: 50%;
+            max-width: 85%;
+            float: right;
+            background-color: #bbf;
+            font-style: italic;
+        }
+
+        p.lexError {
+            margin: 4px;
+            padding: 4px 10px 4px 10px;
+            border-radius: 4px;
+            text-align: right;
+            min-width: 50%;
+            max-width: 85%;
+            float: right;
+            background-color: #f77;
+        }
+    </style>
+</head>
+
+<body>
+<nav class="navbar navbar-inverse">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button
+                    type="button"
+                    class="navbar-toggle"
+                    data-toggle="collapse"
+                    data-target="#myNavbar"
+            >
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">LMS</a>
+        </div>
+        <div class="collapse navbar-collapse" id="myNavbar">
+            <ul class="nav navbar-nav">
+                <li class="active"><a href="#">Home</a></li>
+                <form
+                        class="form-container"
+                        action="{{ url_for('chat') }}"
+                        method="post"
+                >
+                    <input
+                            type="hidden"
+                            class="form-control"
+                            name="email"
+                            value="{{ email }}"
+                    />
+                  
+                    <button type="submit" class="btn btn-warning">Chat</button>
+                </form>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <form
+                        class="form-container"
+                        action="{{ url_for('user_logout') }}"
+                        method="post"
+                >
+                    <input
+                            type="hidden"
+                            class="form-control"
+                            name="email"
+                            value="{{ email }}"
+                    />
+                    <button type="submit" class="btn btn-primary btn-block">
+                        Log Out
+                    </button>
+                </form>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div>
+    <form method="post" enctype="multipart/form-data" action="/uploadfiles">
+        <label for="files">Upload files for data processing:</label>
+        <input type="file" id="files" name="files" multiple><br>
+        <input type="submit">
+    </form>
+    <form method="post" enctype="multipart/form-data" action="/cluster">
+        <label for="files_cluster">Upload files for k-means clustering:</label>
+        <input type="file" id="files_cluster" name="files_cluster" multiple><br>
+        <input type="submit">
+    </form>
+</div>
+
+
+<div class="container-fluid text-center">
+    <div class="row content">
+        <div class="col-sm-6 text-left">
+            <h1>Welcome</h1>
+            <p>
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+                eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
+                ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+                aliquip ex ea commodo consequat. Excepteur sint occaecat cupidatat
+                non proident, sunt in culpa qui officia deserunt mollit anim id est
+                laborum consectetur adipiscing elit, sed do eiusmod tempor
+                incididunt ut labore et dolore magna aliqua. Ut enim ad minim
+                veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex
+                ea commodo consequat.
+            </p>
+            <hr/>
+        </div>
+        <div class="col-sm-4 sidenav" style="top: 200px; left: 230px;">
+            <h2>Online Support Module</h2>
+            <div
+                    id="conversation-lex"
+                    style="
+              width: 400px;
+              height: 400px;
+              border: 1px solid #ccc;
+              background-color: #eee;
+              padding: 4px;
+              overflow: scroll;
+            "
+            ></div>
+            <form
+                    id="chatform"
+                    style="margin-top: 10px; margin-right: 46px;"
+                    onsubmit="return pushChat();"
+            >
+                <input
+                        type="text"
+                        id="lexinput"
+                        size="80"
+                        value=""
+                        placeholder="LMS Online Support "
+                />
+            </form>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+   
+    document.getElementById("lexinput").focus();
+
+
+    AWS.config.region = "us-east-1"; 
+    AWS.config.credentials = new AWS.CognitoIdentityCredentials({
+        
+        IdentityPoolId: "us-east-1:ad8644d6-3ec2-4a9f-877b-4304835c131d",
+    });
+
+    var lexruntime = new AWS.LexRuntime();
+    var lexUserId = "chatbot-demo" + Date.now();
+    var sessionAttributes = {};
+
+    function pushChat() {  
+        var lexinputText = document.getElementById("lexinput");
+        if (
+            lexinputText &&
+            lexinputText.value &&
+            lexinputText.value.trim().length > 0
+        ) {
+            
+            var lexinput = lexinputText.value.trim();
+            lexinputText.value = "...";
+            lexinputText.locked = true;
+
+            
+            var params = {
+                botAlias: "$LATEST",
+                botName: "LearnungManagementsystem",
+                inputText: lexinput,
+                userId: lexUserId,
+                sessionAttributes: sessionAttributes,
+            };
+            showRequest(lexinput);
+            lexruntime.postText(params, function (err, data) {
+                if (err) {
+                    console.log(err, err.stack);
+                    showError(
+                        "Error:  " + err.message + " (see console for details)"
+                    );
+                }
+                if (data) {
+                    
+                    sessionAttributes = data.sessionAttributes;
+                    
+                    showResponse(data);
+                }
+                
+                lexinputText.value = "";
+                lexinputText.locked = false;
+            });
+        }
+      
+        return false;
+    }
+
+    function showRequest(lextxt) {
+        var conversationDiv = document.getElementById("conversation-lex");
+        var req = document.createElement("P");
+        req.className = "userRequest";
+        requesreqtPara.appendChild(document.createTextNode(lextxt));
+        conversationDiv.appendChild(req);
+        conversationDiv.scrollTop = conversationDiv.scrollHeight;
+    }
+
+    function showError(lextxt) {
+        var conversationDiv = document.getElementById("conversation-lex");
+        var err = document.createElement("P");
+        err.className = "lexError";
+        err.appendChild(document.createTextNode(lextxt));
+        conversationDiv.appendChild(err);
+        conversationDiv.scrollTop = conversationDiv.scrollHeight;
+    }
+
+    function showResponse(lexResponse) {
+        var conversationDiv = document.getElementById("conversation-lex");
+        var res = document.createElement("P");
+        res.className = "lexResponse";
+        if (lexResponse.message) {
+            res.appendChild(
+                document.createTextNode(lexResponse.message)
+            );
+            res.appendChild(document.createElement("br"));
+        }
+        if (lexResponse.dialogState === "ReadyForFulfillment") {
+            res.appendChild(
+                document.createTextNode("Ready for fulfillment")
+            );
+            
+        } 
+        conversationDiv.appendChild(res);
+        conversationDiv.scrollTop = conversationDiv.scrollHeight;
+    }
+</script>
+</body>
+</html>

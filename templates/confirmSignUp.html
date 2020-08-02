@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='css/global.css') }}">
+    <title> validation </title>
+</head>
+
+<body>
+    <section class="container-fluid">
+        <section class="row justify-content-center">
+            <section class="col-12 col-sm-6 col-md-3">
+                <h5>{{message}}</h5>
+                <form class="form-container" action="{{url_for('signup_validate')}}" method="post">
+                    <input type="hidden" class="form-control" name="email" value={{username}}>
+                    <input type="hidden" class="form-control" name="password" value={{password}}>
+                    <input type="hidden" class="form-control" name="name" value={{name}}>
+                    <input type="hidden" class="form-control" name="university" value={{university}}>
+                    <input type="hidden" class="form-control" name="role" value={{role}}>
+                    <h4> Verify Account</h4>
+                    <br>
+                    <div class="form-group">
+                        <label for="email">OTP is sent to registred email </label>
+                        <input type="text" class="form-control" id="email" name="otp" aria-describedby="emailHelp" placeholder="Enter OTP" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block"> Submit </button>
+
+                </form>
+                <br><br>
+                <form class="form-container" action="{{url_for('resend_otp_code')}}" method="post">
+                    <input type="hidden" class="form-control" name="email" value={{username}}>
+                    <input type="hidden" class="form-control" name="password" value={{password}}>
+                    <input type="hidden" class="form-control" name="name" value={{name}}>
+                    <input type="hidden" class="form-control" name="university" value={{university}}>
+                    <input type="hidden" class="form-control" name="role" value={{role}}>
+                    <button type="submit" class="btn btn-primary btn-block"> Resend Code </button>
+                </form>
+
+            </section>
+        </section>
+    </section>
+
+</body>

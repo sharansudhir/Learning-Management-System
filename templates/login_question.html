@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='css/global.css') }}">
+    <title> SignUp - Security Question </title>
+</head>
+
+<body>
+    <section class="container-fluid">
+        <section class="row justify-content-center">
+            <section class="col-12 col-sm-6 col-md-3">
+                <form class="form-container" action="{{url_for('ques_login')}}" method="post">
+                    <input type="hidden" class="form-control" name="email" value={{email}}>
+                    <input type="hidden" class="form-control" name="answer" value={{answer}}>
+                    <h4> Login </h4>
+                    <br>
+                    <div class="form-group">
+                        <label>{{question}}</label>
+                        <input type="text" class="form-control" id="answer" name="givenAnswer" placeholder="Enter Answer" required>
+                    </div>
+                    <br>
+                    <button type="submit" class="btn btn-primary btn-block"> Submit </button>
+                </form>
+            </section>
+        </section>
+    </section>
+
+</body>

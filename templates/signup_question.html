@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='css/global.css') }}">
+    <title> SignUp - Security Question </title>
+</head>
+
+<body>
+    <section class="container-fluid">
+        <section class="row justify-content-center">
+            <section class="col-12 col-sm-6 col-md-3">
+                <h5>{{message}}</h5>
+                <form class="form-container" action="{{url_for('ques_signup')}}" method="post">
+                    <input type="hidden" class="form-control" name="email" value={{username}}>
+                    <input type="hidden" class="form-control" name="password" value={{password}}>
+                    <input type="hidden" class="form-control" name="name" value={{name}}>
+                    <input type="hidden" class="form-control" name="university" value={{university}}>
+                    <input type="hidden" class="form-control" name="role" value={{role}}>
+                    <h4> Signup </h4>
+                    <br>
+                    <div class="form-group">
+                        <select id="ques1" name="ques1">
+                            <option value="What was your childhood nickname?">What was your childhood nickname?</option>
+                            <option value="In what city did you meet your spouse/significant other?">In what city did you meet your spouse/significant other?</option>
+                            <option value="What is the name of your favorite childhood friend? ">What is the name of your favorite childhood friend? </option>
+                            <option value="What street did you live on in third grade?">What street did you live on in third grade?</option>
+                          </select>
+                        <input type="text" class="form-control" id="ans1" name="ans1" placeholder="Enter Answer" required>
+                    </div>
+                    <div class="form-group">
+                        <select id="ques2" name="ques2">
+                            <option value="What is your oldest sibling’s birthday month and year? (e.g., January 1900) ">WWhat is your oldest sibling’s birthday month and year? (e.g., January 1900) </option>
+                            <option value="What is the middle name of your youngest child?">What is the middle name of your youngest child?</option>
+                            <option value="What is your oldest sibling's middle name? ">What is your oldest sibling's middle name? </option>
+                            <option value="What school did you attend for sixth grade?">What school did you attend for sixth grade?</option>
+                          </select>
+                        <input type="text" class="form-control" id="ans2" name="ans2" placeholder="Enter Answer" required>
+                    </div>
+                    <div class="form-group">
+                        <select id="ques3" name="ques3">
+                            <option value="What is your oldest cousin's first and last name?">What is your oldest cousin's first and last name?</option>
+                            <option value="What was the name of your first stuffed animal?">What was the name of your first stuffed animal?</option>
+                            <option value="In what city or town did your mother and father meet? ">In what city or town did your mother and father meet? </option>
+                            <option value="In what city does your nearest sibling live? ">In what city does your nearest sibling live? </option>
+                          </select>
+                        <input type="text" class="form-control" id="ans3" name="ans3" placeholder="Enter Answer" required>
+                    </div>
+                    <br>
+                    <button type="submit" class="btn btn-primary btn-block"> Submit </button>
+                </form>
+            </section>
+        </section>
+    </section>
+
+</body>
